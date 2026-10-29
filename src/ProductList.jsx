@@ -1,9 +1,9 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { addToCart } from './CartSlice';
+import { addItem } from './CartSlice';
 
-const plantCategories = [
+const plantsArray = [
 {
 category: 'Air Purifying Plants',
 plants: [
@@ -44,16 +44,24 @@ const dispatch = useDispatch();
 
 const cartItems = useSelector((state) => state.cart.items);
 
+// Track which plant names have been added.
+const addedToCart = {};
+
+cartItems.forEach((item) => {
+addedToCart[item.name] = true;
+});
+
+// Calculate total quantity in the cart.
 const cartCount = cartItems.reduce(
 (total, item) => total + item.quantity,
 0
 );
 
-const handleAddToCart = (plant) => {
-dispatch(addToCart(plant));
+const handleAddToCart = (product) => {
+dispatch(addItem(product));
 };
 
-return ( <div className="product-page"> <nav style={styles.navbar}> <Link to="/" style={styles.brand}>
+return ( <div className="product-page"> <nav className="navbar" style={styles.navbar}> <Link to="/" style={styles.brand}>
 Paradise Nursery </Link>
 
 ```
@@ -61,7 +69,10 @@ Paradise Nursery </Link>
       <Link to="/" style={styles.link}>Home</Link>
       <Link to="/plants" style={styles.link}>Plants</Link>
       <Link to="/cart" style={styles.cartLink}>
-        🛒 Cart ({cartCount})
+        🛒 Cart
+        <span className="cart_quantity_count">
+          {cartCount}
+        </span>
       </Link>
     </div>
   </nav>
@@ -71,15 +82,13 @@ Paradise Nursery </Link>
     <p>Bring nature home with our beautiful collection of plants.</p>
   </header>
 
-  {plantCategories.map((category) => (
+  {plantsArray.map((category) => (
     <section key={category.category} style={styles.category}>
       <h2 style={styles.categoryTitle}>{category.category}</h2>
 
       <div style={styles.grid}>
         {category.plants.map((plant) => {
-          const alreadyAdded = cartItems.some(
-            (item) => item.id === plant.id
-          );
+          const isAdded = Boolean(addedToCart[plant.name]);
 
           return (
             <article key={plant.id} style={styles.card}>
@@ -95,15 +104,15 @@ Paradise Nursery </Link>
 
               <button
                 type="button"
-                disabled={alreadyAdded}
+                disabled={addedToCart[plant.name]}
                 onClick={() => handleAddToCart(plant)}
                 style={{
                   ...styles.button,
-                  backgroundColor: alreadyAdded ? '#888' : '#2e7d32',
-                  cursor: alreadyAdded ? 'not-allowed' : 'pointer',
+                  backgroundColor: isAdded ? '#888' : '#2e7d32',
+                  cursor: isAdded ? 'not-allowed' : 'pointer',
                 }}
               >
-                {alreadyAdded ? 'Added to Cart' : 'Add to Cart'}
+                {isAdded ? 'Added to Cart' : 'Add to Cart'}
               </button>
             </article>
           );
