@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { addItem } from './CartSlice';
-import Navbar from './Navbar';
 
 const plantsArray = [
 {
@@ -41,16 +41,9 @@ plants: [
 
 function ProductList() {
 const dispatch = useDispatch();
+const navigate = useNavigate();
 
-// Get cart items from Redux.
 const cartItems = useSelector((state) => state.cart.items);
-
-// Track plants already added to the cart.
-const addedToCart = {};
-
-cartItems.forEach((item) => {
-addedToCart[item.name] = true;
-});
 
 // Calculate the total quantity of plants in the cart.
 const cartCount = cartItems.reduce(
@@ -58,31 +51,101 @@ const cartCount = cartItems.reduce(
 0
 );
 
-// Add a plant to the Redux cart.
-const handleAddToCart = (product) => {
-dispatch(addItem(product));
+// Track which plants have already been added.
+const addedToCart = {};
+
+cartItems.forEach((item) => {
+addedToCart[item.name] = true;
+});
+
+// Required navigation handlers.
+const handleHomeClick = () => {
+navigate('/');
+};
+
+const handlePlantsClick = () => {
+navigate('/plants');
+};
+
+const handleCartClick = () => {
+navigate('/cart');
+};
+
+// Add the selected plant to the Redux store.
+const handleAddToCart = (plant) => {
+if (!addedToCart[plant.name]) {
+dispatch(addItem(plant));
+}
 };
 
 return ( <div className="product-page">
-{/* Shared navigation bar */} <Navbar />
 
 ```
-  <header style={styles.header}>
+  {/* Navigation bar */}
+  <nav className="navbar">
+    <div className="navbar-brand">
+      Paradise Nursery
+    </div>
+
+    <div className="navbar-links">
+      <button
+        type="button"
+        className="navbar-button"
+        onClick={handleHomeClick}
+      >
+        Home
+      </button>
+
+      <button
+        type="button"
+        className="navbar-button"
+        onClick={handlePlantsClick}
+      >
+        Plants
+      </button>
+
+      <button
+        type="button"
+        className="navbar-button cart-button"
+        onClick={handleCartClick}
+      >
+        🛒 Cart
+        <span className="cart_quantity_count">
+          {cartCount}
+        </span>
+      </button>
+    </div>
+  </nav>
+
+  {/* Product page heading */}
+  <header className="products-header" style={styles.header}>
     <h1>Our Houseplant Collection</h1>
-    <p>Bring nature home with our beautiful collection of plants.</p>
+    <p>
+      Bring nature home with our beautiful collection of plants.
+    </p>
   </header>
 
   {/* Display plant categories */}
   {plantsArray.map((category) => (
-    <section key={category.category} style={styles.category}>
-      <h2 style={styles.categoryTitle}>{category.category}</h2>
+    <section
+      key={category.category}
+      className="product-list"
+      style={styles.category}
+    >
+      <h2 style={styles.categoryTitle}>
+        {category.category}
+      </h2>
 
-      <div style={styles.grid}>
+      <div className="product-grid" style={styles.grid}>
         {category.plants.map((plant) => {
           const isAdded = Boolean(addedToCart[plant.name]);
 
           return (
-            <article key={plant.id} style={styles.card}>
+            <article
+              key={plant.id}
+              className="product-card"
+              style={styles.card}
+            >
               <img
                 src={plant.image}
                 alt={plant.name}
@@ -91,7 +154,9 @@ return ( <div className="product-page">
 
               <h3>{plant.name}</h3>
 
-              <p style={styles.price}>₹{plant.price}</p>
+              <p style={styles.price}>
+                ₹{plant.price}
+              </p>
 
               <button
                 type="button"
@@ -141,6 +206,7 @@ borderRadius: '10px',
 padding: '15px',
 textAlign: 'center',
 boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+backgroundColor: 'white',
 },
 image: {
 width: '100%',
