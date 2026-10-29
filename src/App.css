@@ -8,7 +8,7 @@ body {
 font-family: Arial, sans-serif;
 }
 
-.landing-page {
+.background-image {
 min-height: 100vh;
 background-image: linear-gradient(
 rgba(0, 0, 0, 0.45),
@@ -18,6 +18,15 @@ url('https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fi
 background-size: cover;
 background-position: center;
 background-repeat: no-repeat;
+display: flex;
+justify-content: center;
+align-items: center;
+text-align: center;
+color: white;
+}
+
+.landing-page {
+min-height: 100vh;
 display: flex;
 justify-content: center;
 align-items: center;
