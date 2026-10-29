@@ -2,9 +2,8 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import {
-increaseQuantity,
-decreaseQuantity,
-removeFromCart,
+updateQuantity,
+removeItem,
 selectCartCount,
 selectCartTotal,
 } from './CartSlice';
@@ -16,7 +15,36 @@ const cartItems = useSelector((state) => state.cart.items);
 const cartCount = useSelector(selectCartCount);
 const totalAmount = useSelector(selectCartTotal);
 
-return ( <div style={styles.page}> <nav style={styles.navbar}> <Link to="/" style={styles.brand}>
+// Increase the quantity of a cart item.
+const handleIncrement = (item) => {
+dispatch(
+updateQuantity({
+id: item.id,
+quantity: item.quantity + 1,
+})
+);
+};
+
+// Decrease the quantity and remove the item at zero.
+const handleDecrement = (item) => {
+if (item.quantity <= 1) {
+dispatch(removeItem(item.id));
+} else {
+dispatch(
+updateQuantity({
+id: item.id,
+quantity: item.quantity - 1,
+})
+);
+}
+};
+
+// Remove an item from the cart.
+const handleRemove = (item) => {
+dispatch(removeItem(item.id));
+};
+
+return ( <div className="cart-container" style={styles.page}> <nav className="navbar" style={styles.navbar}> <Link to="/" style={styles.brand}>
 Paradise Nursery </Link>
 
 ```
@@ -24,7 +52,8 @@ Paradise Nursery </Link>
       <Link to="/" style={styles.navLink}>Home</Link>
       <Link to="/plants" style={styles.navLink}>Plants</Link>
       <Link to="/cart" style={styles.navLink}>
-        🛒 Cart ({cartCount})
+        🛒 Cart
+        <span className="cart_quantity_count">{cartCount}</span>
       </Link>
     </div>
   </nav>
@@ -44,7 +73,7 @@ Paradise Nursery </Link>
     ) : (
       <>
         {cartItems.map((item) => (
-          <div key={item.id} style={styles.cartItem}>
+          <div key={item.id} className="cart-item" style={styles.cartItem}>
             <img
               src={item.image}
               alt={item.name}
@@ -54,30 +83,31 @@ Paradise Nursery </Link>
             <div style={styles.details}>
               <h2>{item.name}</h2>
 
-              <p>Unit Price: ₹{item.price.toFixed(2)}</p>
+              <p>
+                Unit Price: ₹
+                {(item.cost ?? item.price).toFixed(2)}
+              </p>
 
               <p>
-                Total: ₹{(item.price * item.quantity).toFixed(2)}
+                Total: ₹
+                {((item.cost ?? item.price) * item.quantity).toFixed(2)}
               </p>
 
               <div style={styles.quantityControls}>
                 <button
                   type="button"
-                  onClick={() => dispatch(decreaseQuantity(item.id))}
-                  disabled={item.quantity <= 1}
+                  onClick={() => handleDecrement(item)}
                   style={styles.quantityButton}
                   aria-label={`Decrease ${item.name} quantity`}
                 >
                   −
                 </button>
 
-                <span style={styles.quantity}>
-                  {item.quantity}
-                </span>
+                <span style={styles.quantity}>{item.quantity}</span>
 
                 <button
                   type="button"
-                  onClick={() => dispatch(increaseQuantity(item.id))}
+                  onClick={() => handleIncrement(item)}
                   style={styles.quantityButton}
                   aria-label={`Increase ${item.name} quantity`}
                 >
@@ -87,7 +117,8 @@ Paradise Nursery </Link>
 
               <button
                 type="button"
-                onClick={() => dispatch(removeFromCart(item.id))}
+                className="cart-item-delete"
+                onClick={() => handleRemove(item)}
                 style={styles.deleteButton}
               >
                 Delete
@@ -97,9 +128,7 @@ Paradise Nursery </Link>
         ))}
 
         <div style={styles.summary}>
-          <h2>
-            Total Plants: {cartCount}
-          </h2>
+          <h2>Total Plants: {cartCount}</h2>
 
           <h2>
             Total Amount: ₹{totalAmount.toFixed(2)}
