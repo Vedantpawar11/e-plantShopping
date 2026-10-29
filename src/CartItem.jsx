@@ -15,7 +15,7 @@ const cartItems = useSelector((state) => state.cart.items);
 const cartCount = useSelector(selectCartCount);
 const totalAmount = useSelector(selectCartTotal);
 
-// Increase the quantity of a cart item.
+// Increase item quantity.
 const handleIncrement = (item) => {
 dispatch(
 updateQuantity({
@@ -25,10 +25,10 @@ quantity: item.quantity + 1,
 );
 };
 
-// Decrease the quantity and remove the item at zero.
+// Decrease item quantity or remove it when quantity reaches one.
 const handleDecrement = (item) => {
 if (item.quantity <= 1) {
-dispatch(removeItem(item.id));
+dispatch(removeItem(item.name));
 } else {
 dispatch(
 updateQuantity({
@@ -39,20 +39,26 @@ quantity: item.quantity - 1,
 }
 };
 
-// Remove an item from the cart.
+// Remove an item from the cart by name.
 const handleRemove = (item) => {
-dispatch(removeItem(item.id));
+dispatch(removeItem(item.name));
 };
 
 return ( <div className="cart-container" style={styles.page}> <nav className="navbar" style={styles.navbar}> <Link to="/" style={styles.brand}>
 Paradise Nursery </Link>
 
 ```
-    <div style={styles.navLinks}>
-      <Link to="/" style={styles.navLink}>Home</Link>
-      <Link to="/plants" style={styles.navLink}>Plants</Link>
+    <div className="navbar-links" style={styles.navLinks}>
+      <Link to="/" style={styles.navLink}>
+        Home
+      </Link>
+
+      <Link to="/plants" style={styles.navLink}>
+        Plants
+      </Link>
+
       <Link to="/cart" style={styles.navLink}>
-        🛒 Cart
+        🛒 Cart{' '}
         <span className="cart_quantity_count">{cartCount}</span>
       </Link>
     </div>
@@ -72,66 +78,76 @@ Paradise Nursery </Link>
       </div>
     ) : (
       <>
-        {cartItems.map((item) => (
-          <div key={item.id} className="cart-item" style={styles.cartItem}>
-            <img
-              src={item.image}
-              alt={item.name}
-              style={styles.image}
-            />
+        {cartItems.map((item) => {
+          const unitPrice = item.cost ?? item.price;
+          const itemTotal = unitPrice * item.quantity;
 
-            <div style={styles.details}>
-              <h2>{item.name}</h2>
+          return (
+            <div
+              key={item.id}
+              className="cart-item"
+              style={styles.cartItem}
+            >
+              <img
+                className="cart-item-image"
+                src={item.image}
+                alt={item.name}
+                style={styles.image}
+              />
 
-              <p>
-                Unit Price: ₹
-                {(item.cost ?? item.price).toFixed(2)}
-              </p>
+              <div className="cart-item-details" style={styles.details}>
+                <h2 className="cart-item-name">{item.name}</h2>
 
-              <p>
-                Total: ₹
-                {((item.cost ?? item.price) * item.quantity).toFixed(2)}
-              </p>
+                <p className="cart-item-price">
+                  Unit Price: ₹{Number(unitPrice).toFixed(2)}
+                </p>
 
-              <div style={styles.quantityControls}>
+                <p className="cart-item-total">
+                  Item Total: ₹{Number(itemTotal).toFixed(2)}
+                </p>
+
+                <div style={styles.quantityControls}>
+                  <button
+                    type="button"
+                    onClick={() => handleDecrement(item)}
+                    style={styles.quantityButton}
+                    aria-label={`Decrease ${item.name} quantity`}
+                  >
+                    −
+                  </button>
+
+                  <span style={styles.quantity}>
+                    {item.quantity}
+                  </span>
+
+                  <button
+                    type="button"
+                    onClick={() => handleIncrement(item)}
+                    style={styles.quantityButton}
+                    aria-label={`Increase ${item.name} quantity`}
+                  >
+                    +
+                  </button>
+                </div>
+
                 <button
                   type="button"
-                  onClick={() => handleDecrement(item)}
-                  style={styles.quantityButton}
-                  aria-label={`Decrease ${item.name} quantity`}
+                  className="cart-item-delete"
+                  onClick={() => handleRemove(item)}
+                  style={styles.deleteButton}
                 >
-                  −
-                </button>
-
-                <span style={styles.quantity}>{item.quantity}</span>
-
-                <button
-                  type="button"
-                  onClick={() => handleIncrement(item)}
-                  style={styles.quantityButton}
-                  aria-label={`Increase ${item.name} quantity`}
-                >
-                  +
+                  Delete
                 </button>
               </div>
-
-              <button
-                type="button"
-                className="cart-item-delete"
-                onClick={() => handleRemove(item)}
-                style={styles.deleteButton}
-              >
-                Delete
-              </button>
             </div>
-          </div>
-        ))}
+          );
+        })}
 
-        <div style={styles.summary}>
+        <div className="cart-summary" style={styles.summary}>
           <h2>Total Plants: {cartCount}</h2>
 
           <h2>
-            Total Amount: ₹{totalAmount.toFixed(2)}
+            Total Amount: ₹{Number(totalAmount).toFixed(2)}
           </h2>
 
           <div style={styles.actions}>
@@ -141,6 +157,7 @@ Paradise Nursery </Link>
 
             <button
               type="button"
+              className="get-started-button1"
               onClick={() => alert('Checkout Coming Soon!')}
               style={styles.checkoutButton}
             >
