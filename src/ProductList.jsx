@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
 import { addItem } from './CartSlice';
+import Navbar from './Navbar';
 
 const plantsArray = [
 {
@@ -42,46 +42,37 @@ plants: [
 function ProductList() {
 const dispatch = useDispatch();
 
+// Get cart items from Redux.
 const cartItems = useSelector((state) => state.cart.items);
 
-// Track which plant names have been added.
+// Track plants already added to the cart.
 const addedToCart = {};
 
 cartItems.forEach((item) => {
 addedToCart[item.name] = true;
 });
 
-// Calculate total quantity in the cart.
+// Calculate the total quantity of plants in the cart.
 const cartCount = cartItems.reduce(
 (total, item) => total + item.quantity,
 0
 );
 
+// Add a plant to the Redux cart.
 const handleAddToCart = (product) => {
 dispatch(addItem(product));
 };
 
-return ( <div className="product-page"> <nav className="navbar" style={styles.navbar}> <Link to="/" style={styles.brand}>
-Paradise Nursery </Link>
+return ( <div className="product-page">
+{/* Shared navigation bar */} <Navbar />
 
 ```
-    <div style={styles.navLinks}>
-      <Link to="/" style={styles.link}>Home</Link>
-      <Link to="/plants" style={styles.link}>Plants</Link>
-      <Link to="/cart" style={styles.cartLink}>
-        🛒 Cart
-        <span className="cart_quantity_count">
-          {cartCount}
-        </span>
-      </Link>
-    </div>
-  </nav>
-
   <header style={styles.header}>
     <h1>Our Houseplant Collection</h1>
     <p>Bring nature home with our beautiful collection of plants.</p>
   </header>
 
+  {/* Display plant categories */}
   {plantsArray.map((category) => (
     <section key={category.category} style={styles.category}>
       <h2 style={styles.categoryTitle}>{category.category}</h2>
@@ -127,37 +118,6 @@ Paradise Nursery </Link>
 }
 
 const styles = {
-navbar: {
-display: 'flex',
-justifyContent: 'space-between',
-alignItems: 'center',
-flexWrap: 'wrap',
-gap: '15px',
-padding: '18px 5%',
-backgroundColor: '#1b5e20',
-color: 'white',
-},
-brand: {
-color: 'white',
-fontSize: '24px',
-fontWeight: 'bold',
-textDecoration: 'none',
-},
-navLinks: {
-display: 'flex',
-alignItems: 'center',
-flexWrap: 'wrap',
-gap: '20px',
-},
-link: {
-color: 'white',
-textDecoration: 'none',
-},
-cartLink: {
-color: 'white',
-textDecoration: 'none',
-fontWeight: 'bold',
-},
 header: {
 textAlign: 'center',
 padding: '35px 15px',
