@@ -63,3 +63,60 @@ cursor: pointer;
 .get-started-btn:hover {
 background-color: #1b5e20;
 }
+
+/* Navigation bar */
+.navbar {
+display: flex;
+justify-content: space-between;
+align-items: center;
+flex-wrap: wrap;
+gap: 15px;
+padding: 18px 5%;
+background-color: #1b5e20;
+}
+
+.navbar-brand {
+color: white;
+font-size: 24px;
+font-weight: bold;
+}
+
+.navbar-links {
+display: flex;
+align-items: center;
+gap: 20px;
+flex-wrap: wrap;
+}
+
+.navbar-button {
+border: none;
+background: transparent;
+color: white;
+font-size: 16px;
+cursor: pointer;
+padding: 8px;
+}
+
+.navbar-button:hover {
+color: #c8e6c9;
+}
+
+.cart-button {
+display: flex;
+align-items: center;
+gap: 8px;
+}
+
+.cart_quantity_count {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+min-width: 22px;
+height: 22px;
+padding: 0 5px;
+border-radius: 50%;
+background-color: white;
+color: #1b5e20;
+font-weight: bold;
+font-size: 13px;
+}
