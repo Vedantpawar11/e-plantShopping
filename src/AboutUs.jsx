@@ -1,9 +1,8 @@
 import React from 'react';
 
 function AboutUs() {
-return ( <div className="about-us"> <h1>About Paradise Nursery</h1>
+return ( <div className="about-us-container"> <h1>About Paradise Nursery</h1>
 
-```
   <p>
     Welcome to Paradise Nursery, your destination for beautiful indoor
     plants and greenery. We believe that plants make every space more
@@ -23,7 +22,7 @@ return ( <div className="about-us"> <h1>About Paradise Nursery</h1>
     people to create greener, healthier living spaces.
   </p>
 </div>
-```
+
 
 );
 }
